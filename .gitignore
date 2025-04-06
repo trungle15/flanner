@@ -8,6 +8,7 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 ENV/
 build/
 develop-eggs/
@@ -23,6 +24,8 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+logs
+output
 
 # Flask
 instance/

@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+beautifulsoup4
+requests
+sqlalchemy
+pydantic
+python-dotenv
+python-jose[cryptography]
+bcrypt
+passlib
+email-validator
+google-genai
+python-multipart

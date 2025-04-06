@@ -52,7 +52,7 @@ backend/
 - **Pydantic**: Data validation and settings management
 - **BeautifulSoup4**: Web scraping library
 - **JWT**: Token-based authentication
-- **OpenAI**: AI integration for meal recommendations
+- **Google Gemini**: AI integration for meal recommendations
 
 ## Setup and Installation
 
@@ -78,7 +78,7 @@ Create a `.env` file in the backend directory with the following variables:
 ```
 DATABASE_URL=sqlite:///./flanner.db
 SECRET_KEY=your_secret_key_here
-OPENAI_API_KEY=your_openai_api_key
+GOOGLE_API_KEY=your_google_api_key_here
 ```
 
 ## Running the Application
@@ -92,7 +92,7 @@ python -m backend.main
 This will:
 - Start the FastAPI server on `http://0.0.0.0:8000`
 - Initialize the database (creating tables if they don't exist)
-- Start the background scraper to fetch menu data
+- Set up the application for menu scraping (note: background scraper is configurable)
 
 ## API Documentation
 

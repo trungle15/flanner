@@ -38,7 +38,7 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=["http://localhost:3000"],  # Frontend development server
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -249,7 +249,8 @@ def run_scraper():
                     
                     # Scrape each menu
                     for menu in menus:
-                        scrape_menu(menu, session_manager, db, 1)  # Use default dining hall ID 1
+                        dining_hall_id = dining_hall.id if dining_hall else 1
+                        scrape_menu(menu, session_manager, db, dining_hall_id)
                 except Exception as e:
                     logger.error(f"Error processing menu date: {str(e)}")
         else:

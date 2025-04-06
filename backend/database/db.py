@@ -46,6 +46,7 @@ mealplan_item = Table(
     Base.metadata,
     Column("mealplan_id", Integer, ForeignKey("mealplans.id")),
     Column("menu_item_id", Integer, ForeignKey("menu_items.id")),
+    Column("servings", Float, default=1.0),
 )
 
 

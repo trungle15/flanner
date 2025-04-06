@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime, date, timedelta
+import logging
 
 from backend.database.db import get_db, MenuItem, DiningHall
 from backend.models.mealplan import MenuItem as MenuItemModel
@@ -48,10 +49,12 @@ def get_menu_items(
     for item in items:
         if item.nutrients:
             try:
-                # Handle nutrients as a JSON string
+                # Handle nutrients as a JSON string if it's not already a dict
                 import json
-                item.nutrients = json.loads(item.nutrients)
-            except:
+                if isinstance(item.nutrients, str):
+                    item.nutrients = json.loads(item.nutrients)
+            except json.JSONDecodeError as e:
+                logging.error(f"Error decoding JSON for item {item.id}: {e}")
                 item.nutrients = None
         # Allergens are now handled by the model's property getter
     
@@ -88,10 +91,12 @@ def get_items_by_dining_hall(
     for item in items:
         if item.nutrients:
             try:
-                # Handle nutrients as a JSON string
+                # Handle nutrients as a JSON string if it's not already a dict
                 import json
-                item.nutrients = json.loads(item.nutrients)
-            except:
+                if isinstance(item.nutrients, str):
+                    item.nutrients = json.loads(item.nutrients)
+            except json.JSONDecodeError as e:
+                logging.error(f"Error decoding JSON for item {item.id}: {e}")
                 item.nutrients = None
         # Allergens are now handled by the model's property getter
     
@@ -141,10 +146,12 @@ def search_menu_items(
     for item in items:
         if item.nutrients:
             try:
-                # Handle nutrients as a JSON string
+                # Handle nutrients as a JSON string if it's not already a dict
                 import json
-                item.nutrients = json.loads(item.nutrients)
-            except:
+                if isinstance(item.nutrients, str):
+                    item.nutrients = json.loads(item.nutrients)
+            except json.JSONDecodeError as e:
+                logging.error(f"Error decoding JSON for item {item.id}: {e}")
                 item.nutrients = None
         # Allergens are now handled by the model's property getter
     
@@ -165,10 +172,12 @@ def get_menu_item(
     # Parse strings
     if item.nutrients:
         try:
-            # Handle nutrients as a JSON string
+            # Handle nutrients as a JSON string if it's not already a dict
             import json
-            item.nutrients = json.loads(item.nutrients)
-        except:
+            if isinstance(item.nutrients, str):
+                item.nutrients = json.loads(item.nutrients)
+        except json.JSONDecodeError as e:
+            logging.error(f"Error decoding JSON for item {item.id}: {e}")
             item.nutrients = None
     # Allergens are now handled by the model's property getter
     

@@ -149,6 +149,7 @@ def generate_meal_plan(
     ```
     
     Additional Instructions: {additional_instructions if additional_instructions else 'None'}
+    Target Calories for the day: {target_calories if target_calories else 'Not specified'}
     
     Please create a meal plan that:
     1. Selects appropriate items from the available menu for each meal type
@@ -159,8 +160,13 @@ def generate_meal_plan(
     
     Format your response as a JSON object with the following structure:
     {{
-        "selected_items": [list of selected menu item IDs],
-        "explanation": "Brief explanation of the meal plan and why these items were chosen",
+        "selected_items": [
+            {{
+                "id": item_id,
+                "servings": number_of_servings
+            }}
+        ],
+        "explanation": "Brief explanation of the meal plan and why these items were chosen, including serving sizes",
         "nutritional_summary": {{
             "total_calories": X,
             "total_protein": X,
@@ -209,8 +215,13 @@ def generate_meal_plan(
                 response_data = json.loads(ai_response)
             
             # Get selected items
-            selected_item_ids = response_data.get("selected_items", [])
-            selected_items = db.query(MenuItem).filter(MenuItem.id.in_(selected_item_ids)).all()
+            selected_items_data = response_data.get("selected_items", [])
+            # Extract menu item IDs and servings
+            menu_item_map = {item["id"]: item["servings"] for item in selected_items_data}
+            selected_items = db.query(MenuItem).filter(MenuItem.id.in_(menu_item_map.keys())).all()
+            # Add servings to each menu item
+            for item in selected_items:
+                item.servings = menu_item_map[item.id]
             
             # Get nutritional summary
             nutritional_summary = response_data.get("nutritional_summary", {})
@@ -221,7 +232,7 @@ def generate_meal_plan(
                 "total_protein": nutritional_summary.get("total_protein", 0),
                 "total_carbs": nutritional_summary.get("total_carbs", 0),
                 "total_fat": nutritional_summary.get("total_fat", 0),
-                "menu_items": selected_items,
+                "menu_items": [{"id": item.id, "servings": item.servings} for item in selected_items],
                 "ai_prompt": prompt,
                 "ai_response": ai_response
             }

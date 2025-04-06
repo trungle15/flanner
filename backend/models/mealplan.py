@@ -44,8 +44,24 @@ class MealPlanBase(BaseModel):
     total_fat: Optional[float] = None
 
 
+class MealPlanItem(BaseModel):
+    """Model for menu items in a meal plan, including servings."""
+    id: int
+    name: str
+    category: str
+    meal_type: str
+    serving_size: Optional[str] = None
+    calories: Optional[int] = None
+    nutrients: Optional[Dict[str, Any]] = None
+    allergens: Optional[List[str]] = None
+    servings: float = Field(default=1.0, ge=0.0, description="Number of servings of this item")
+    
+    class Config:
+        orm_mode = True
+
+
 class MealPlanCreate(MealPlanBase):
-    menu_items: List[int]
+    menu_items: List[MealPlanItem]
     ai_prompt: Optional[str] = None
     ai_response: Optional[str] = None
 
@@ -53,13 +69,13 @@ class MealPlanCreate(MealPlanBase):
 class MealPlanUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    menu_items: Optional[List[int]] = None
+    menu_items: Optional[List[MealPlanItem]] = None
 
 
 class MealPlan(MealPlanBase):
     id: int
     date: datetime
-    menu_items: List[MenuItem]
+    menu_items: List[MealPlanItem]
     ai_prompt: Optional[str] = None
     ai_response: Optional[str] = None
 

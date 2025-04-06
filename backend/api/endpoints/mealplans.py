@@ -108,6 +108,17 @@ def generate_ai_meal_plan(
     )
     
     # Create meal plan in database
+    menu_items_data = meal_plan_data.get("menu_items", [])
+    menu_item_ids = [item["id"] for item in menu_items_data]
+    menu_items = db.query(MenuItem).filter(MenuItem.id.in_(menu_item_ids)).all()
+    
+    # Create a map of menu item IDs to their servings
+    servings_map = {item["id"]: item.get("servings", 1.0) for item in menu_items_data}
+    
+    # Set servings for each menu item
+    for item in menu_items:
+        item.servings = servings_map[item.id]
+    
     db_meal_plan = MealPlan(
         user_id=current_user.id,
         name=f"Meal Plan for {target_date.strftime('%Y-%m-%d')}",
@@ -118,7 +129,7 @@ def generate_ai_meal_plan(
         total_fat=meal_plan_data.get("total_fat"),
         ai_prompt=meal_plan_data.get("ai_prompt"),
         ai_response=meal_plan_data.get("ai_response"),
-        menu_items=meal_plan_data.get("menu_items")
+        menu_items=menu_items
     )
     
     db.add(db_meal_plan)
